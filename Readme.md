@@ -27,8 +27,7 @@ spring.data.mongodb.uri=mongodb+srv://admin:<password>@cluster0.eypdh.mongodb.ne
 * Upload a File: `http://localhost:8080/file/upload`
 * Download a File: `http://localhost:8080/file/download/{id}`
 
-<hr/>
-
+##
 The application can be accessed at `http://localhost:8080` or open `src/main/resources/static/index.html` to access frontend
 
 ![File upload frontend snapshot](/src/main/resources/images/frontend.png)
