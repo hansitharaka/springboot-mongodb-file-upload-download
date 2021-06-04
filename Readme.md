@@ -1,6 +1,6 @@
 ## File Upload / Download Example using Spring Boot and MongoDB
 
-Tutorial : [File Upload with SpringBoot and MongoDB](https://hansanitharaka.medium.com/file-upload-with-springboot-and-mongodb-76a8f5b9f75d)
+Tutorial : [File Upload & Download with SpringBoot and MongoDB](https://hansanitharaka.medium.com/file-upload-with-springboot-and-mongodb-76a8f5b9f75d)
 
 ## Getting Started
 **1. Clone the repository**
