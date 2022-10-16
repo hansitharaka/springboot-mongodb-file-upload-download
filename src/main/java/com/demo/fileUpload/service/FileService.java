@@ -5,15 +5,23 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import org.apache.commons.io.IOUtils;
+import org.bson.BsonValue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class FileService {
@@ -60,4 +68,41 @@ public class FileService {
         return loadFile;
     }
 
+    public void downloadFilesAsZip(HttpServletResponse response) throws IOException {
+
+        //get all files in db
+        List<GridFSFile> fileList = new ArrayList<>();
+        template.find(new Query()).into(fileList);
+
+        //if fileList is not empty, loop through the list
+        if (fileList.size() > 0) {
+
+            //create a zip file
+            ZipOutputStream zipOutputStream  = new ZipOutputStream(response.getOutputStream());
+
+            for (GridFSFile gridFSFile : fileList) {
+                //file id is returning as a bson value
+                BsonValue bsonValue = gridFSFile.getId();
+                String file_id = String.valueOf(bsonValue.asObjectId().getValue());
+
+                //find and retrieve file (using previous download method)
+                LoadFile file = downloadFile(file_id);
+
+                //add file to the zip file entry
+                ZipEntry zipEntry = new ZipEntry(file.getFilename());
+                zipEntry.setSize(Long.parseLong(file.getFileSize()));
+
+                zipOutputStream.putNextEntry(zipEntry);
+
+                ByteArrayResource fileResource = new ByteArrayResource(file.getFile());
+                StreamUtils.copy(fileResource.getInputStream(), zipOutputStream);
+
+                zipOutputStream.closeEntry();
+            }
+
+            zipOutputStream.finish();
+            zipOutputStream.close();
+        }
+
+    }
 }
