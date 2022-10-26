@@ -34,3 +34,5 @@ The application can be accessed at `http://localhost:8080` or open `src/main/res
 
 
 That's all! Good Luck :muscle:
+
+----------
